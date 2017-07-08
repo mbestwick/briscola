@@ -11,6 +11,7 @@ class Card(object):
         self.suit = suit
         self.card = card
         self.points = points.get(card, 0)
+        self.next = None
 
     def __repr__(self):
         return "<%s di %s: %s pts>" % (self.card, self.suit, self.points)
