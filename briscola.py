@@ -57,10 +57,8 @@ class Game(object):
         else:
             winner, loser = lead, follow
 
-        print "%s wins the hand! %s + %s" % (winner.name, card1.points, card2.points)
+        print "%s wins the hand!" % winner.name
         winner.points += card1.points + card2.points
-        print "%s: %s" % (self.player1.name, self.player1.points)
-        print "%s: %s" % (self.player2.name, self.player2.points)
 
         if self.playing_deck.count > 0:
             winner.hand.append(self.playing_deck.pick_card())
@@ -68,8 +66,17 @@ class Game(object):
 
         if winner.hand:
             self.play_hand(winner, loser)
+        else:
+            print "%s: %s points" % (self.player1.name, self.player1.points)
+            print "%s: %s points" % (self.player2.name, self.player2.points)
+            if self.player1.points > 60:
+                print "%s wins!!!" % self.player1.name
+            else:
+                print "%s wins!!!" % self.player2.name
+
 
 lorenzo = Player('Lorenzo')
 luca = Player('Luca')
 game = Game(lorenzo, luca)
 print game.briscola
+game.play_hand(lorenzo, luca)
