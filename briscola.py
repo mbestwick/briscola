@@ -2,69 +2,74 @@
 
 from deck import ShuffledDeck
 
-rank = ['2', '4', '5', '6', '7', 'Fante', 'Cavallo', 'Re', 'Tre', 'Asso']
+
+class Player(object):
+    """ A player of briscola. """
+
+    def __init__(self, name):
+        self.name = name
+        self.hand = []
+        self.points = 0
+
+    def __repr__(self):
+        return "<Player: %s, points: %s, hand: %s>" % (self.name,
+                                                       self.points,
+                                                       self.hand)
 
 
 class Game(object):
     """ A game of briscola. """
 
-    def __init__(self):
-        self.player1 = []
-        self.player2 = []
+    def __init__(self, player1, player2):
+        self.player1 = player1
+        self.player2 = player2
         self.playing_deck = ShuffledDeck()
         self.briscola = self.playing_deck.tail
 
         for i in range(3):
-            self.player2.append(self.playing_deck.pick_card())
-            self.player1.append(self.playing_deck.pick_card())
+            self.player2.hand.append(self.playing_deck.pick_card())
+            self.player1.hand.append(self.playing_deck.pick_card())
 
-    def play_hand(self, order=1):
+    def play_hand(self, lead, follow):
         """ One hand of the game. """
 
-        if order == 1:
-            lead = {'hand': self.player1, 'name': "Player1"},
-            follow = {'hand': self.player2, 'name': "Player2"}
-        else:
-            lead = {'hand': self.player2, 'name': "Player2"}
-            follow = {'hand': self.player1, 'name': "Player1"}
-
-        print "Lead:", lead['name'], lead['hand']
+        print "Lead:", lead.name, lead.hand
         discard1 = int(raw_input("Which card would you like to play?\n> "))
-        card1 = lead['hand'].pop(discard1)
-        print "Follow:", follow['name'], follow['hand']
+        card1 = lead.hand.pop(discard1)
+        print "Follow:", follow.name, follow.hand
         discard2 = int(raw_input("Which card would you like to play?\n> "))
-        card2 = follow['hand'].pop(discard2)
+        card2 = follow.hand.pop(discard2)
 
         if card1.suit == card2.suit == self.briscola.suit:
-            if rank.index(card1.card) > rank.index(card2.card):
-                winner = lead
-                print "%s wins the hand." % lead['name']
+            if card1.rank > card2.rank:
+                winner, loser = lead, follow
             else:
-                winner = follow
-                print "%s wins the hand." % follow['name']
+                winner, loser = follow, lead
         elif card1.suit == self.briscola.suit:
-            winner = lead
-            print "%s wins the hand." % lead['name']
+            winner, loser = lead, follow
         elif card2.suit == self.briscola.suit:
-            winner = follow
-            print "%s wins the hand." % follow['name']
-        else:
-            if rank.index(card1.card) > rank.index(card2.card):
-                winner = lead
-                print "%s wins the hand." % lead['name']
+            winner, loser = follow, lead
+        elif card1.suit == card2.suit:
+            if card1.rank > card2.rank:
+                winner, loser = lead, follow
             else:
-                winner = follow
-                print "%s wins the hand." % follow['name']
-
-        if winner['name'] == "Player1":
-            if self.playing_deck.count > 6:
-                self.player1.append(self.playing_deck.pick_card())
-                self.player2.append(self.playing_deck.pick_card())
-            if self.playing_deck.count == 0:
-
+                winner, loser = follow, lead
         else:
-            self.player2.append(self.playing_deck.pick_card())
-            self.player1.append(self.playing_deck.pick_card())
+            winner, loser = lead, follow
 
+        print "%s wins the hand! %s + %s" % (winner.name, card1.points, card2.points)
+        winner.points += card1.points + card2.points
+        print "%s: %s" % (self.player1.name, self.player1.points)
+        print "%s: %s" % (self.player2.name, self.player2.points)
 
+        if self.playing_deck.count > 0:
+            winner.hand.append(self.playing_deck.pick_card())
+            loser.hand.append(self.playing_deck.pick_card())
 
+        if winner.hand:
+            self.play_hand(winner, loser)
+
+lorenzo = Player('Lorenzo')
+luca = Player('Luca')
+game = Game(lorenzo, luca)
+print game.briscola

@@ -2,6 +2,7 @@
 
 
 points = {'Asso': 11, 'Tre': 10, 'Re': 4, 'Cavallo': 3, 'Fante': 2}
+rank = ['2', '4', '5', '6', '7', 'Fante', 'Cavallo', 'Re', 'Tre', 'Asso']
 
 
 class Card(object):
@@ -11,6 +12,7 @@ class Card(object):
         self.suit = suit
         self.card = card
         self.points = points.get(card, 0)
+        self.rank = rank.index(card)
         self.next = None
 
     def __repr__(self):
